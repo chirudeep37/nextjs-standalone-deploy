@@ -20,6 +20,13 @@ import { useRouter } from "next/router";
 import * as p from "@plasmicapp/react-web";
 import * as ph from "@plasmicapp/react-web/lib/host";
 
+import { usePlasmicDataSourceContext } from "@plasmicapp/data-sources-context";
+import {
+  executePlasmicDataOp,
+  usePlasmicDataOp,
+  usePlasmicInvalidate
+} from "@plasmicapp/react-web/lib/data-sources";
+
 import {
   hasVariant,
   classNames,
@@ -39,6 +46,11 @@ import {
 import CopyableLink from "../../CopyableLink"; // plasmic-import: jBhsgYv9HOjs/component
 import { FormWrapper } from "@plasmicpkgs/antd5/skinny/registerForm"; // plasmic-import: TgJFzUZpvQ/codeComponent
 import { formHelpers as FormWrapper_Helpers } from "@plasmicpkgs/antd5/skinny/registerForm"; // plasmic-import: TgJFzUZpvQ/codeComponentHelper
+import { FormItemWrapper } from "@plasmicpkgs/antd5/skinny/registerForm"; // plasmic-import: EYHwZh9ILg/codeComponent
+import { AntdInput } from "@plasmicpkgs/antd5/skinny/registerInput"; // plasmic-import: Vf5hntD2SZ5/codeComponent
+import { inputHelpers as AntdInput_Helpers } from "@plasmicpkgs/antd5/skinny/registerInput"; // plasmic-import: Vf5hntD2SZ5/codeComponentHelper
+import { AntdTextArea } from "@plasmicpkgs/antd5/skinny/registerInput"; // plasmic-import: pTzGlMptTxd/codeComponent
+import { inputHelpers as AntdTextArea_Helpers } from "@plasmicpkgs/antd5/skinny/registerInput"; // plasmic-import: pTzGlMptTxd/codeComponentHelper
 import { AntdButton } from "@plasmicpkgs/antd5/skinny/registerButton"; // plasmic-import: bx9Xzvf5_eu/codeComponent
 
 import { useScreenVariants as useScreenVariantspiqJvYRF5L1 } from "./PlasmicGlobalVariant__Screen"; // plasmic-import: PiqJvY_rF5L1/globalVariant
@@ -68,6 +80,8 @@ export type PlasmicHomepage__OverridesType = {
   root?: p.Flex<"div">;
   copyableLink?: p.Flex<typeof CopyableLink>;
   form?: p.Flex<typeof FormWrapper>;
+  input?: p.Flex<typeof AntdInput>;
+  textArea?: p.Flex<typeof AntdTextArea>;
   button?: p.Flex<typeof AntdButton>;
 };
 
@@ -114,6 +128,22 @@ function PlasmicHomepage__RenderFunc(props: {
 
         refName: "form",
         onMutate: p.generateOnMutateForSpec("value", FormWrapper_Helpers)
+      },
+      {
+        path: "input.value",
+        type: "private",
+        variableType: "text",
+        initFunc: ({ $props, $state, $queries, $ctx }) => undefined,
+
+        onMutate: p.generateOnMutateForSpec("value", AntdInput_Helpers)
+      },
+      {
+        path: "textArea.value",
+        type: "private",
+        variableType: "text",
+        initFunc: ({ $props, $state, $queries, $ctx }) => undefined,
+
+        onMutate: p.generateOnMutateForSpec("value", AntdTextArea_Helpers)
       }
     ],
     [$props, $ctx, $refs]
@@ -124,6 +154,8 @@ function PlasmicHomepage__RenderFunc(props: {
     $queries: {},
     $refs
   });
+  const dataSourcesCtx = usePlasmicDataSourceContext();
+  const plasmicInvalidate = usePlasmicInvalidate();
 
   const globalVariants = ensureGlobalVariants({
     screen: useScreenVariantspiqJvYRF5L1()
@@ -266,69 +298,220 @@ function PlasmicHomepage__RenderFunc(props: {
               </div>
             </p.Stack>
             <div className={classNames(projectcss.all, sty.freeBox__nwQq0)} />
-          </div>
-          {(() => {
-            const child$Props = {
-              className: classNames("__wab_instance", sty.form),
-              extendedOnValuesChange:
-                p.generateStateOnChangePropForCodeComponents(
-                  $state,
-                  "value",
-                  ["form", "value"],
-                  FormWrapper_Helpers
-                ),
-              formItems: [
-                { label: "Name", name: "name", inputType: "Text" },
-                { label: "Message", name: "message", inputType: "Text Area" }
-              ],
-              labelCol: { span: 8, horizontalOnly: true },
-              layout: "vertical",
-              mode: "simplified",
-              ref: ref => {
-                $refs["form"] = ref;
-              },
-              submitSlot: (
-                <AntdButton
-                  data-plasmic-name={"button"}
-                  data-plasmic-override={overrides.button}
-                  className={classNames("__wab_instance", sty.button)}
-                  submitsForm={true}
-                  type={"primary"}
-                >
-                  <div
-                    className={classNames(
-                      projectcss.all,
-                      projectcss.__wab_text,
-                      sty.text___8C0F1
-                    )}
-                  >
-                    {"Submit"}
-                  </div>
-                </AntdButton>
-              ),
-              wrapperCol: { span: 16, horizontalOnly: true }
-            };
-            p.initializeCodeComponentStates(
-              $state,
-              [
-                {
-                  name: "value",
-                  plasmicStateName: "form.value"
-                }
-              ],
-              [],
-              FormWrapper_Helpers ?? {},
-              child$Props
-            );
 
-            return (
-              <FormWrapper
-                data-plasmic-name={"form"}
-                data-plasmic-override={overrides.form}
-                {...child$Props}
-              />
-            );
-          })()}
+            {(() => {
+              const child$Props = {
+                className: classNames("__wab_instance", sty.form),
+                extendedOnValuesChange:
+                  p.generateStateOnChangePropForCodeComponents(
+                    $state,
+                    "value",
+                    ["form", "value"],
+                    FormWrapper_Helpers
+                  ),
+                formItems: [
+                  { label: "Name", name: "name", inputType: "Text" },
+                  { label: "Message", name: "message", inputType: "Text Area" }
+                ],
+                labelCol: { span: 8, horizontalOnly: true },
+                layout: "vertical",
+                mode: "advanced",
+                onFinish: async values => {
+                  const $steps = {};
+
+                  $steps["airtableCreate"] = true
+                    ? (() => {
+                        const actionArgs = {
+                          dataOp: {
+                            sourceId: "eVTxo9a51GFyqCfHZtzGJe",
+                            opId: "84cfcfe1-4284-431b-9880-ec7e399b9fe0",
+                            userArgs: {},
+                            cacheKey: `plasmic.$.84cfcfe1-4284-431b-9880-ec7e399b9fe0.$.`,
+                            invalidatedKeys: ["plasmic_refresh_all"],
+                            roleId: null
+                          }
+                        };
+                        return (async ({ dataOp, continueOnError }) => {
+                          try {
+                            const response = await executePlasmicDataOp(
+                              dataOp,
+                              {
+                                userAuthToken: dataSourcesCtx?.userAuthToken,
+                                user: dataSourcesCtx?.user
+                              }
+                            );
+                            await plasmicInvalidate(dataOp.invalidatedKeys);
+                            return response;
+                          } catch (e) {
+                            if (!continueOnError) {
+                              throw e;
+                            }
+                            return e;
+                          }
+                        })?.apply(null, [actionArgs]);
+                      })()
+                    : undefined;
+                  if (
+                    typeof $steps["airtableCreate"] === "object" &&
+                    typeof $steps["airtableCreate"].then === "function"
+                  ) {
+                    $steps["airtableCreate"] = await $steps["airtableCreate"];
+                  }
+                },
+                ref: ref => {
+                  $refs["form"] = ref;
+                },
+                submitSlot: null,
+                wrapperCol: { span: 16, horizontalOnly: true }
+              };
+              p.initializeCodeComponentStates(
+                $state,
+                [
+                  {
+                    name: "value",
+                    plasmicStateName: "form.value"
+                  }
+                ],
+                [],
+                FormWrapper_Helpers ?? {},
+                child$Props
+              );
+
+              return (
+                <FormWrapper
+                  data-plasmic-name={"form"}
+                  data-plasmic-override={overrides.form}
+                  {...child$Props}
+                >
+                  <FormItemWrapper
+                    className={classNames(
+                      "__wab_instance",
+                      sty.formField__obNu9
+                    )}
+                    label={
+                      <div
+                        className={classNames(
+                          projectcss.all,
+                          projectcss.__wab_text,
+                          sty.text__dsPeh
+                        )}
+                      >
+                        {"Name"}
+                      </div>
+                    }
+                    name={"name"}
+                  >
+                    {(() => {
+                      const child$Props = {
+                        className: classNames("__wab_instance", sty.input),
+                        onChange: p.generateStateOnChangePropForCodeComponents(
+                          $state,
+                          "value",
+                          ["input", "value"],
+                          AntdInput_Helpers
+                        ),
+                        value: p.generateStateValueProp($state, [
+                          "input",
+                          "value"
+                        ])
+                      };
+                      p.initializeCodeComponentStates(
+                        $state,
+                        [
+                          {
+                            name: "value",
+                            plasmicStateName: "input.value"
+                          }
+                        ],
+                        [],
+                        AntdInput_Helpers ?? {},
+                        child$Props
+                      );
+
+                      return (
+                        <AntdInput
+                          data-plasmic-name={"input"}
+                          data-plasmic-override={overrides.input}
+                          {...child$Props}
+                        />
+                      );
+                    })()}
+                  </FormItemWrapper>
+                  <FormItemWrapper
+                    className={classNames(
+                      "__wab_instance",
+                      sty.formField__ph9JI
+                    )}
+                    label={
+                      <div
+                        className={classNames(
+                          projectcss.all,
+                          projectcss.__wab_text,
+                          sty.text__owVbc
+                        )}
+                      >
+                        {"Message"}
+                      </div>
+                    }
+                    name={"message"}
+                  >
+                    {(() => {
+                      const child$Props = {
+                        className: classNames("__wab_instance", sty.textArea),
+                        onChange: p.generateStateOnChangePropForCodeComponents(
+                          $state,
+                          "value",
+                          ["textArea", "value"],
+                          AntdTextArea_Helpers
+                        ),
+                        value: p.generateStateValueProp($state, [
+                          "textArea",
+                          "value"
+                        ])
+                      };
+                      p.initializeCodeComponentStates(
+                        $state,
+                        [
+                          {
+                            name: "value",
+                            plasmicStateName: "textArea.value"
+                          }
+                        ],
+                        [],
+                        AntdTextArea_Helpers ?? {},
+                        child$Props
+                      );
+
+                      return (
+                        <AntdTextArea
+                          data-plasmic-name={"textArea"}
+                          data-plasmic-override={overrides.textArea}
+                          {...child$Props}
+                        />
+                      );
+                    })()}
+                  </FormItemWrapper>
+                  <AntdButton
+                    data-plasmic-name={"button"}
+                    data-plasmic-override={overrides.button}
+                    className={classNames("__wab_instance", sty.button)}
+                    submitsForm={true}
+                    type={"primary"}
+                  >
+                    <div
+                      className={classNames(
+                        projectcss.all,
+                        projectcss.__wab_text,
+                        sty.text__kPigD
+                      )}
+                    >
+                      {"Submit"}
+                    </div>
+                  </AntdButton>
+                </FormWrapper>
+              );
+            })()}
+          </div>
         </div>
       </div>
     </React.Fragment>
@@ -336,9 +519,11 @@ function PlasmicHomepage__RenderFunc(props: {
 }
 
 const PlasmicDescendants = {
-  root: ["root", "copyableLink", "form", "button"],
+  root: ["root", "copyableLink", "form", "input", "textArea", "button"],
   copyableLink: ["copyableLink"],
-  form: ["form", "button"],
+  form: ["form", "input", "textArea", "button"],
+  input: ["input"],
+  textArea: ["textArea"],
   button: ["button"]
 } as const;
 type NodeNameType = keyof typeof PlasmicDescendants;
@@ -348,6 +533,8 @@ type NodeDefaultElementType = {
   root: "div";
   copyableLink: typeof CopyableLink;
   form: typeof FormWrapper;
+  input: typeof AntdInput;
+  textArea: typeof AntdTextArea;
   button: typeof AntdButton;
 };
 
@@ -413,6 +600,8 @@ export const PlasmicHomepage = Object.assign(
     // Helper components rendering sub-elements
     copyableLink: makeNodeComponent("copyableLink"),
     form: makeNodeComponent("form"),
+    input: makeNodeComponent("input"),
+    textArea: makeNodeComponent("textArea"),
     button: makeNodeComponent("button"),
 
     // Metadata about props expected for PlasmicHomepage
