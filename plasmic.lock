@@ -3,7 +3,9 @@
     {
       "projectId": "qPAGcMbi2XxMM7ts5pPvqr",
       "version": "latest",
-      "dependencies": {},
+      "dependencies": {
+        "ohDidvG9XsCeFumugENU3J": "6.9.0"
+      },
       "lang": "ts",
       "fileLocks": [
         {
@@ -12,29 +14,24 @@
           "checksum": "855bb517fce9725c6bbaa78984cda933"
         },
         {
-          "assetId": "qPAGcMbi2XxMM7ts5pPvqr",
-          "type": "projectCss",
-          "checksum": "339ee56bec96d03a56c30499d698ac53"
-        },
-        {
           "type": "renderModule",
           "assetId": "m7GhEtlw-YFV",
-          "checksum": "5348ecc5a271bbac32a525f782cb75a0"
+          "checksum": "8c76a5451ae1c9da4b60b4eb37b3493b"
         },
         {
           "type": "cssRules",
           "assetId": "m7GhEtlw-YFV",
-          "checksum": "5348ecc5a271bbac32a525f782cb75a0"
+          "checksum": "8c76a5451ae1c9da4b60b4eb37b3493b"
         },
         {
           "type": "renderModule",
           "assetId": "jBhsgYv9HOjs",
-          "checksum": "71fd1b74365e3ed82e92ab29c87d3e7a"
+          "checksum": "4b1af516ba983f863cbb1a8854a23406"
         },
         {
           "type": "cssRules",
           "assetId": "jBhsgYv9HOjs",
-          "checksum": "71fd1b74365e3ed82e92ab29c87d3e7a"
+          "checksum": "4b1af516ba983f863cbb1a8854a23406"
         },
         {
           "type": "icon",
@@ -50,6 +47,35 @@
           "type": "icon",
           "assetId": "bmlQEVCsYVFd",
           "checksum": "c58272cabc179e21af2f3f2781acc135"
+        },
+        {
+          "assetId": "qPAGcMbi2XxMM7ts5pPvqr",
+          "type": "projectCss",
+          "checksum": "339ee56bec96d03a56c30499d698ac53"
+        },
+        {
+          "assetId": "qPAGcMbi2XxMM7ts5pPvqr",
+          "checksum": "06b40676cf549eebfe438f4540a9e2fd",
+          "type": "globalContexts"
+        }
+      ],
+      "codegenVersion": "0.0.1"
+    },
+    {
+      "projectId": "ohDidvG9XsCeFumugENU3J",
+      "version": "6.9.0",
+      "dependencies": {},
+      "lang": "ts",
+      "fileLocks": [
+        {
+          "assetId": "ohDidvG9XsCeFumugENU3J",
+          "type": "projectCss",
+          "checksum": "fd83b730367fdbde2c69bc6cf31c2a3c"
+        },
+        {
+          "assetId": "ohDidvG9XsCeFumugENU3J",
+          "checksum": "9edd6de3249e8ce87ee98f963fba1736",
+          "type": "globalContexts"
         }
       ],
       "codegenVersion": "0.0.1"

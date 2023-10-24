@@ -37,11 +37,15 @@ import {
   ensureGlobalVariants
 } from "@plasmicapp/react-web";
 import CopyableLink from "../../CopyableLink"; // plasmic-import: jBhsgYv9HOjs/component
+import { FormWrapper } from "@plasmicpkgs/antd5/skinny/registerForm"; // plasmic-import: TgJFzUZpvQ/codeComponent
+import { formHelpers as FormWrapper_Helpers } from "@plasmicpkgs/antd5/skinny/registerForm"; // plasmic-import: TgJFzUZpvQ/codeComponentHelper
+import { AntdButton } from "@plasmicpkgs/antd5/skinny/registerButton"; // plasmic-import: bx9Xzvf5_eu/codeComponent
 
 import { useScreenVariants as useScreenVariantspiqJvYRF5L1 } from "./PlasmicGlobalVariant__Screen"; // plasmic-import: PiqJvY_rF5L1/globalVariant
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
+import plasmic_antd_5_hostless_css from "../antd_5_hostless/plasmic_antd_5_hostless.module.css"; // plasmic-import: ohDidvG9XsCeFumugENU3J/projectcss
 import projectcss from "./plasmic_minimalist_about_me_page.module.css"; // plasmic-import: qPAGcMbi2XxMM7ts5pPvqr/projectcss
 import sty from "./PlasmicHomepage.module.css"; // plasmic-import: m7GhEtlw-YFV/css
 
@@ -63,6 +67,8 @@ export const PlasmicHomepage__ArgProps = new Array<ArgPropType>();
 export type PlasmicHomepage__OverridesType = {
   root?: p.Flex<"div">;
   copyableLink?: p.Flex<typeof CopyableLink>;
+  form?: p.Flex<typeof FormWrapper>;
+  button?: p.Flex<typeof AntdButton>;
 };
 
 export interface DefaultHomepageProps {}
@@ -98,6 +104,27 @@ function PlasmicHomepage__RenderFunc(props: {
 
   const currentUser = p.useCurrentUser?.() || {};
 
+  const stateSpecs: Parameters<typeof p.useDollarState>[0] = React.useMemo(
+    () => [
+      {
+        path: "form.value",
+        type: "private",
+        variableType: "object",
+        initFunc: ({ $props, $state, $queries, $ctx }) => undefined,
+
+        refName: "form",
+        onMutate: p.generateOnMutateForSpec("value", FormWrapper_Helpers)
+      }
+    ],
+    [$props, $ctx, $refs]
+  );
+  const $state = p.useDollarState(stateSpecs, {
+    $props,
+    $ctx,
+    $queries: {},
+    $refs
+  });
+
   const globalVariants = ensureGlobalVariants({
     screen: useScreenVariantspiqJvYRF5L1()
   });
@@ -124,6 +151,7 @@ function PlasmicHomepage__RenderFunc(props: {
             projectcss.plasmic_default_styles,
             projectcss.plasmic_mixins,
             projectcss.plasmic_tokens,
+            plasmic_antd_5_hostless_css.plasmic_tokens,
             sty.root
           )}
         >
@@ -239,6 +267,68 @@ function PlasmicHomepage__RenderFunc(props: {
             </p.Stack>
             <div className={classNames(projectcss.all, sty.freeBox__nwQq0)} />
           </div>
+          {(() => {
+            const child$Props = {
+              className: classNames("__wab_instance", sty.form),
+              extendedOnValuesChange:
+                p.generateStateOnChangePropForCodeComponents(
+                  $state,
+                  "value",
+                  ["form", "value"],
+                  FormWrapper_Helpers
+                ),
+              formItems: [
+                { label: "Name", name: "name", inputType: "Text" },
+                { label: "Message", name: "message", inputType: "Text Area" }
+              ],
+              labelCol: { span: 8, horizontalOnly: true },
+              layout: "vertical",
+              mode: "simplified",
+              ref: ref => {
+                $refs["form"] = ref;
+              },
+              submitSlot: (
+                <AntdButton
+                  data-plasmic-name={"button"}
+                  data-plasmic-override={overrides.button}
+                  className={classNames("__wab_instance", sty.button)}
+                  submitsForm={true}
+                  type={"primary"}
+                >
+                  <div
+                    className={classNames(
+                      projectcss.all,
+                      projectcss.__wab_text,
+                      sty.text___8C0F1
+                    )}
+                  >
+                    {"Submit"}
+                  </div>
+                </AntdButton>
+              ),
+              wrapperCol: { span: 16, horizontalOnly: true }
+            };
+            p.initializeCodeComponentStates(
+              $state,
+              [
+                {
+                  name: "value",
+                  plasmicStateName: "form.value"
+                }
+              ],
+              [],
+              FormWrapper_Helpers ?? {},
+              child$Props
+            );
+
+            return (
+              <FormWrapper
+                data-plasmic-name={"form"}
+                data-plasmic-override={overrides.form}
+                {...child$Props}
+              />
+            );
+          })()}
         </div>
       </div>
     </React.Fragment>
@@ -246,8 +336,10 @@ function PlasmicHomepage__RenderFunc(props: {
 }
 
 const PlasmicDescendants = {
-  root: ["root", "copyableLink"],
-  copyableLink: ["copyableLink"]
+  root: ["root", "copyableLink", "form", "button"],
+  copyableLink: ["copyableLink"],
+  form: ["form", "button"],
+  button: ["button"]
 } as const;
 type NodeNameType = keyof typeof PlasmicDescendants;
 type DescendantsType<T extends NodeNameType> =
@@ -255,6 +347,8 @@ type DescendantsType<T extends NodeNameType> =
 type NodeDefaultElementType = {
   root: "div";
   copyableLink: typeof CopyableLink;
+  form: typeof FormWrapper;
+  button: typeof AntdButton;
 };
 
 type ReservedPropsType = "variants" | "args" | "overrides";
@@ -318,6 +412,8 @@ export const PlasmicHomepage = Object.assign(
   {
     // Helper components rendering sub-elements
     copyableLink: makeNodeComponent("copyableLink"),
+    form: makeNodeComponent("form"),
+    button: makeNodeComponent("button"),
 
     // Metadata about props expected for PlasmicHomepage
     internalVariantProps: PlasmicHomepage__VariantProps,
